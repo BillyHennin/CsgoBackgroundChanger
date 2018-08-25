@@ -24,7 +24,6 @@ namespace BackgroundChanger.Pages
         public async void FillList()
         {
             //TODO : Afficher ProgressAsync
-            MyDirectory.CheckMyDocDir();
             const string strMessage = "Loading webm.... ";
             var controller = await this.ShowProgressAsync("Please wait", strMessage);
             WebmList.Items.Clear();
@@ -74,13 +73,7 @@ namespace BackgroundChanger.Pages
 
         private async void SelectBtn_Click(object sender, RoutedEventArgs e)
         {
-            var isValid = await MyDirectory.CheckMyCsgoDir(this);
-            if (!isValid.Value)
-            {
-                return;
-            }
-
-            MyDirectory.UpdateBackground(MyDirectory.RemoveUri(WebmPlayer.Source.ToString()));
+            MyDirectory.UpdateBackground(this, MyDirectory.RemoveUri(WebmPlayer.Source.ToString()));
             //TODO : Update CSGO files
             await this.ShowMessageAsync("Background changed", "Enjoy your new background !");
         }

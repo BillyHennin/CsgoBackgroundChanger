@@ -11,17 +11,22 @@ namespace BackgroundChanger.Classes
     public static class MyDirectory
     {
         private const string DocFolderName = "CsgoBackgroundChanger";
-        public static string[] GetAllWebm() => Directory.GetFiles(MyRegedit.MyWebmFolderPath, "*.webm");
+
+        public static string[] GetAllWebm()
+        {
+            CheckMyDocDir();
+            return Directory.GetFiles(MyRegedit.MyWebmFolderPath, "*.webm");
+        }
+
         public static void CheckMyDocDir()
         {
-            if (string.IsNullOrEmpty(MyRegedit.MyWebmFolderPath))
-            {
-                MyRegedit.MyWebmFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            }
-
             if (MyRegedit.MyWebmFolderPath.Contains(DocFolderName))
             {
                 return;
+            }
+            if (string.IsNullOrEmpty(MyRegedit.MyWebmFolderPath))
+            {
+                MyRegedit.MyWebmFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             }
             if (!Directory.GetDirectories(MyRegedit.MyWebmFolderPath).Contains(DocFolderName))
             {
@@ -42,10 +47,6 @@ namespace BackgroundChanger.Classes
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
                     MyRegedit.MyCsgoFolderPath = fbd.SelectedPath;
-                    if (IsCsgoFolderValid())
-                    {
-                        return true;
-                    }
                     await CheckMyCsgoDir(window, false);
                 }
             }
@@ -70,9 +71,30 @@ namespace BackgroundChanger.Classes
                    Directory.GetDirectories(csgoFolder + AddS("csgo", "panorama")).Contains(csgoFolder + AddS("csgo","panorama", "videos"));
         }
 
-        public static void UpdateBackground(string newFilePath)
+        public static async void UpdateBackground(MetroWindow window, string newFilePath)
         {
+            var isValid = await CheckMyCsgoDir(window);
+            if (!isValid.Value)
+            {
+                return;
+            }
+            var videoPath = MyRegedit.MyCsgoFolderPath + AddS("csgo", "panorama", "videos");
+            if (!Directory.GetFiles(videoPath).Contains(videoPath + AddS("nuke.webm.tmp")))
+            {
+                File.Copy(videoPath + AddS("nuke.webm"), videoPath + AddS("nuke.webm.tmp"));
+                File.Copy(videoPath + AddS("nuke720.webm"), videoPath + AddS("nuke720.webm.tmp"));
+                File.Copy(videoPath + AddS("nuke540.webm"), videoPath + AddS("nuke540.webm.tmp"));
+            }
 
+            File.Delete(videoPath + AddS("nuke.webm"));
+            File.Delete(videoPath + AddS("nuke720.webm"));
+            File.Delete(videoPath + AddS("nuke540.webm"));
+
+            var webmPath = MyRegedit.MyWebmFolderPath + AddS(newFilePath) + ".webm";
+            File.Copy(webmPath, videoPath + AddS("nuke.webm"));
+            File.Copy(webmPath, videoPath + AddS("nuke720.webm"));
+            File.Copy(webmPath, videoPath + AddS("nuke540.webm"));
+            //File.Move(newFilePath, 
         }
 
         public static string RemoveUri(string fulluri, string optionalRemove = "")
