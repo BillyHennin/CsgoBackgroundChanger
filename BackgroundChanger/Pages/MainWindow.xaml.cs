@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -27,7 +26,7 @@ namespace BackgroundChanger.Pages
             const string strMessage = "Loading webm.... ";
             var controller = await this.ShowProgressAsync("Please wait", strMessage);
             WebmList.Items.Clear();
-            var allWebm = MyDirectory.GetAllWebm();
+            var allWebm = MyFolders.GetAllWebm();
             if (allWebm.Length == 0)
             {
                 await controller.CloseAsync();
@@ -51,6 +50,7 @@ namespace BackgroundChanger.Pages
                 controller.SetProgress(i += progress);
                 controller.SetMessage(strMessage + y++ + "/" + allWebm.Length);
             }
+
             await controller.CloseAsync();
         }
 
@@ -64,7 +64,7 @@ namespace BackgroundChanger.Pages
             {
                 WebmPlayer.Source = ((MediaElement) WebmList.SelectedItem).Source;
                 var uri = WebmPlayer.Source.ToString();
-                LbTitle.Content = MyDirectory.RemoveUri(uri);
+                LbTitle.Content = MyFolders.RemoveUri(uri);
                 //TODO : Get file info
                 //LbInfos.Content = (new System.IO.FileInfo(uri.Replace("file:///", string.Empty))).Length;
                 SetVisibility(true);
@@ -73,7 +73,7 @@ namespace BackgroundChanger.Pages
 
         private async void SelectBtn_Click(object sender, RoutedEventArgs e)
         {
-            MyDirectory.UpdateBackground(this, MyDirectory.RemoveUri(WebmPlayer.Source.ToString()));
+            MyFolders.UpdateBackground(this, MyFolders.RemoveUri(WebmPlayer.Source.ToString()));
             //TODO : Update CSGO files
             await this.ShowMessageAsync("Background changed", "Enjoy your new background !");
         }

@@ -13,11 +13,13 @@ namespace BackgroundChanger.Classes
             get => GetValue(MyWebmKey);
             set => SetValue(MyWebmKey, value);
         }
+
         public static string MyCsgoFolderPath
         {
             get => GetValue(MyCsgoKey);
             set => SetValue(MyCsgoKey, value);
         }
+
         public static void CheckRegedit()
         {
             if (Registry.CurrentUser.OpenSubKey(MyKey, true) == null)
@@ -34,10 +36,15 @@ namespace BackgroundChanger.Classes
             {
                 SetValue(MyCsgoKey, string.Empty);
             }
+
             MyWebmFolderPath = Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(MyWebmKey).ToString();
             MyCsgoFolderPath = Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(MyCsgoKey).ToString();
         }
-        private static void SetValue(string key, string value) => Registry.CurrentUser.OpenSubKey(MyKey, true)?.SetValue(key, value);
-        private static string GetValue(string key) => Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(key).ToString();
+
+        private static void SetValue(string key, string value) =>
+            Registry.CurrentUser.OpenSubKey(MyKey, true)?.SetValue(key, value);
+
+        private static string GetValue(string key) =>
+            Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(key).ToString();
     }
 }
