@@ -13,6 +13,9 @@ namespace BackgroundChanger.Classes
     public static class MyUpdate
     {
         private const string Url = "https://billyhennin.github.io/CsgoBackgroundChanger/";
+        private const string Title = "Title";
+        private const string Descr = "Description";
+        private const string Versi = "Version";
 
         public static async Task<object> CheckUpdate(MainWindow window)
         {
@@ -23,32 +26,33 @@ namespace BackgroundChanger.Classes
                 using (var stream = response.GetResponseStream())
                 {
                     var result =
-                        JObject.Parse(new StreamReader(stream ?? throw new InvalidOperationException(), Encoding.UTF8)
-                            .ReadToEnd());
-                    if (string.IsNullOrEmpty(result["Version"].ToString()))
+                            JObject.Parse(new StreamReader(stream ?? throw new InvalidOperationException(),
+                                    Encoding.UTF8).ReadToEnd());
+                    if (string.IsNullOrEmpty(result[Versi].ToString()))
                     {
                         throw new Exception();
                     }
 
                     if (Assembly.GetExecutingAssembly().GetName().Version
-                            .CompareTo(new Version(result["Version"].ToString())) >= 0)
+                                .CompareTo(new Version(result[Versi].ToString())) >= 0)
                     {
                         return null;
                     }
 
                     window.UpdateFlyOut.IsOpen = true;
-                    window.LbTitleUpdate.Content = string.IsNullOrEmpty(result["Title"].ToString())
-                        ? "A new update is available"
-                        : result["Title"].ToString();
-                    window.LbDescUpdate.Content = string.IsNullOrEmpty(result["Description"].ToString())
-                        ? "Check the website for more infos."
-                        : result["Description"].ToString();
+                    window.LbTitleUpdate.Content = string.IsNullOrEmpty(result[Title].ToString())
+                            ? "A new update is available"
+                            : result[Title].ToString();
+                    window.LbDescUpdate.Content = string.IsNullOrEmpty(result[Descr].ToString())
+                            ? "Check the website for more infos."
+                            : result[Descr].ToString();
                     return null;
                 }
             }
             catch
             {
-                await window.ShowMessageAsync("Error", "An error has occured while checking for an update.");
+                await window.ShowMessageAsync("Unable to check for a new version",
+                        "An error has occured while checking for an update. You can still check the website by yourself.");
                 return null;
             }
         }

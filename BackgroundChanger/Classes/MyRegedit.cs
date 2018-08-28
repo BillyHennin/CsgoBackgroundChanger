@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 
 namespace BackgroundChanger.Classes
 {
@@ -42,10 +41,12 @@ namespace BackgroundChanger.Classes
             MyCsgoFolderPath = Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(MyCsgoKey).ToString();
         }
 
-        private static void SetValue(string key, string value) =>
+        private static void SetValue(string key, string value)
+        {
             Registry.CurrentUser.OpenSubKey(MyKey, true)?.SetValue(key, value);
+        }
 
         private static string GetValue(string key) =>
-            Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(key).ToString();
+                Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(key).ToString();
     }
 }

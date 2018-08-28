@@ -10,10 +10,12 @@ namespace BackgroundChanger.Pages
 {
     /// <inheritdoc cref="" />
     /// <summary>
-    /// Logique d'interaction pour MainWindow.xaml
+    ///     Logique d'interaction pour MainWindow.xaml
     /// </summary>
     public partial class MainWindow
     {
+        private const string DefError = "Error !";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -23,12 +25,17 @@ namespace BackgroundChanger.Pages
         public async void InitWindow()
         {
             MyRegedit.CheckRegedit();
-            if(await MyUpdate.CheckUpdate(this) == null) await FillList();
+            if (await MyUpdate.CheckUpdate(this) == null)
+            {
+                await FillList();
+            }
         }
 
         private void SetVisibility(bool isVisible)
-            => WebmPlayer.Visibility = LbTitle.Visibility = LbInfos.Visibility =
-               SelectBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
+        {
+            WebmPlayer.Visibility = LbTitle.Visibility = LbInfos.Visibility =
+                    SelectBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
+        }
 
         public async Task FillList()
         {
@@ -37,6 +44,7 @@ namespace BackgroundChanger.Pages
             {
                 allWebm = await LoopUpdateFolder();
             }
+
             const string msg = "Loading webm.... ";
             var controller = await this.ShowProgressAsync("Please wait", msg);
             controller.SetIndeterminate();
@@ -49,16 +57,17 @@ namespace BackgroundChanger.Pages
             {
                 WebmList.Items.Add(new MediaElement
                 {
-                    Source = new Uri(file),
-                    Height = 200,
-                    Width = 315,
-                    Stretch = Stretch.Fill,
-                    Margin = new Thickness(0, 5, 0, 5)
+                        Source = new Uri(file),
+                        Height = 200,
+                        Width = 315,
+                        Stretch = Stretch.Fill,
+                        Margin = new Thickness(0, 5, 0, 5)
                 });
                 controller.SetProgress(y += progress);
                 controller.SetMessage($"{msg} {y++}/{allWebm.Length}");
-                await Task.Delay(800 / allWebm.Length );
+                await Task.Delay(800 / allWebm.Length);
             }
+
             await controller.CloseAsync().ConfigureAwait(false);
         }
 
@@ -66,7 +75,9 @@ namespace BackgroundChanger.Pages
         {
             if (firstTime)
             {
-                var result = await this.ShowMessageAsync("Error !", "Your webm folder is empty or does not contains any webm file, do you want to update it ?", MessageDialogStyle.AffirmativeAndNegative);
+                var result = await this.ShowMessageAsync(DefError,
+                        "Your webm folder is empty or does not contains any webm file, do you want to update it ?",
+                        MessageDialogStyle.AffirmativeAndNegative);
                 if (result == MessageDialogResult.Affirmative)
                 {
                     MyFolders.UpdateWebFolder();
@@ -76,16 +87,21 @@ namespace BackgroundChanger.Pages
             {
                 MyFolders.UpdateWebFolder();
             }
+
             var allWebm = MyFolders.GetAllWebm();
             if (allWebm.Length == 0)
             {
-                var result2 = await this.ShowMessageAsync("Error !", "This app cannot work without a valid webm folder, do you want to update yours ?", MessageDialogStyle.AffirmativeAndNegative);
+                var result2 = await this.ShowMessageAsync(DefError,
+                        "This app cannot work without a valid webm folder, do you want to update yours ?",
+                        MessageDialogStyle.AffirmativeAndNegative);
                 if (result2 == MessageDialogResult.Affirmative)
                 {
                     await LoopUpdateFolder(false);
                 }
+
                 Environment.Exit(1);
             }
+
             return allWebm;
         }
 
@@ -101,24 +117,31 @@ namespace BackgroundChanger.Pages
                 SetVisibility(true);
             }
         }
+
         private void WebmPlayer_MediaOpened(object sender, RoutedEventArgs e)
         {
             LbTitle.Content = MyFolders.RemoveUri(WebmPlayer.Source.ToString());
-            LbInfos.Content = WebmPlayer.NaturalVideoWidth + " x " + WebmPlayer.NaturalVideoHeight
-                              + " (" + WebmPlayer.NaturalDuration.TimeSpan.ToString(@"mm\:ss") + ")";
+            LbInfos.Content =
+                    $"{WebmPlayer.NaturalVideoWidth} x {WebmPlayer.NaturalVideoHeight} ({WebmPlayer.NaturalDuration.TimeSpan:mm\\:ss})";
         }
+
         private async void SelectBtn_Click(object sender, RoutedEventArgs e)
         {
             if (await MyFolders.UpdateBackground(this, MyFolders.RemoveUri(WebmPlayer.Source.ToString())))
             {
-               await this.ShowMessageAsync("Background changed", "Enjoy your new background !");
+                await this.ShowMessageAsync("Background changed", "Enjoy your new background !");
             }
         }
-        private async void BtnRefresh_Click(object sender, RoutedEventArgs e) => await FillList();
+
+        private async void BtnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            await FillList();
+        }
 
         private async void BtnChangeWebmFolder_Click(object sender, RoutedEventArgs e)
         {
-            var result = await this.ShowMessageAsync("Change your folder", "Do you want to change your webm folder", MessageDialogStyle.AffirmativeAndNegative);
+            var result = await this.ShowMessageAsync("Change your folder", "Do you want to change your webm folder",
+                    MessageDialogStyle.AffirmativeAndNegative);
             if (result == MessageDialogResult.Affirmative)
             {
                 MyFolders.UpdateWebFolder();
