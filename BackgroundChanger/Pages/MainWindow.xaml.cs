@@ -90,6 +90,7 @@ namespace BackgroundChanger.Pages
             }
 
             var allWebm = MyFolders.GetAllWebm();
+            // ReSharper disable once InvertIf
             if (allWebm.Length == 0)
             {
                 var result2 = await this.ShowMessageAsync(DefError,
@@ -148,24 +149,28 @@ namespace BackgroundChanger.Pages
 
         private async void BtnChangeCSGOFolder_Click(object sender, RoutedEventArgs e)
         {
-            var result = await this.ShowMessageAsync("Change your folder", "Do you want to change your CS:GO folder",
+            var result = await this.ShowMessageAsync("Change your folder", "Do you want to change your Counter-Strike Global Offensive folder",
                     MessageDialogStyle.AffirmativeAndNegative);
-            if (result == MessageDialogResult.Affirmative)
+            if (result != MessageDialogResult.Affirmative)
             {
-                using (var fbd = new FolderBrowserDialog { Description = @"Select your CS:GO folder." })
+                return;
+            }
+
+            using (var fbd = new FolderBrowserDialog { Description = @"Select your Counter-Strike Global Offensive folder." })
+            {
+                var resultFolder = fbd.ShowDialog();
+                if (resultFolder != System.Windows.Forms.DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
-                    var resultFolder = fbd.ShowDialog();
-                    if (resultFolder == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                    {
-                        if (MyFolders.IsCsgoFolderValid())
-                        {
-                            MyRegedit.MyCsgoFolderPath = fbd.SelectedPath;
-                        }
-                        else
-                        {
-                            await this.ShowMessageAsync(DefError, "This application cannot work without a valid CS:GO folder.");
-                        }
-                    }
+                    return;
+                }
+
+                if (MyFolders.IsCsgoFolderValid(fbd.SelectedPath))
+                {
+                    MyRegedit.MyCsgoFolderPath = fbd.SelectedPath;
+                }
+                else
+                {
+                    await this.ShowMessageAsync(DefError, "This application cannot work without a valid Counter-Strike Global Offensive folder.");
                 }
             }
         }

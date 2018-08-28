@@ -54,7 +54,7 @@ namespace BackgroundChanger.Classes
                 var result = fbd.ShowDialog();
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
-                    MyRegedit.MyCsgoFolderPath = fbd.SelectedPath;
+                    MyRegedit.MyWebmFolderPath = fbd.SelectedPath;
                 }
             }
 
@@ -68,8 +68,8 @@ namespace BackgroundChanger.Classes
                 return true;
             }
 
-            await window.ShowMessageAsync(DefError, "Please select your CS:GO folder");
-            using (var fbd = new FolderBrowserDialog {Description = @"Select your CS:GO folder."})
+            await window.ShowMessageAsync(DefError, "Please select your Counter-Strike Global OffensiveMain folder");
+            using (var fbd = new FolderBrowserDialog {Description = @"Select your Counter-Strike Global Offensive Main folder." })
             {
                 var result = fbd.ShowDialog();
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
@@ -84,13 +84,17 @@ namespace BackgroundChanger.Classes
                 return null;
             }
 
-            await window.ShowMessageAsync(DefError, "This application cannot work without a specified CS:GO folder.");
+            await window.ShowMessageAsync(DefError, "This application cannot work without a specified Counter-Strike Global Offensive folder.");
             return false;
         }
 
-        public static bool IsCsgoFolderValid()
+        public static bool IsCsgoFolderValid(string strPath = "")
         {
-            var csgoFolder = MyRegedit.MyCsgoFolderPath;
+            if (string.IsNullOrEmpty(strPath))
+            {
+                strPath = MyRegedit.MyCsgoFolderPath;
+            }
+            var csgoFolder = strPath;
             if (string.IsNullOrEmpty(csgoFolder))
             {
                 return false;
