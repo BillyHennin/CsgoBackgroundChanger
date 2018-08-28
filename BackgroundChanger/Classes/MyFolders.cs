@@ -108,13 +108,13 @@ namespace BackgroundChanger.Classes
                        .Contains(csgoFolder + Format("csgo", "panorama", "videos"));
         }
 
-        public static async void UpdateBackground(MetroWindow window, string newFilePath)
+        public static async Task<bool> UpdateBackground(MetroWindow window, string newFilePath)
         {
             //TODO : Check everything
             var isValid = await CheckMyCsgoDir(window);
             if (!isValid.Value)
             {
-                return;
+                return false;
             }
 
             var videoPath = MyRegedit.MyCsgoFolderPath + Format("csgo", "panorama", "videos");
@@ -133,6 +133,7 @@ namespace BackgroundChanger.Classes
             File.Copy(webmPath, videoPath + Format("nuke.webm"));
             File.Copy(webmPath, videoPath + Format("nuke720.webm"));
             File.Copy(webmPath, videoPath + Format("nuke540.webm"));
+            return true;
         }
 
         public static string RemoveUri(string fulluri, string optionalRemove = "")

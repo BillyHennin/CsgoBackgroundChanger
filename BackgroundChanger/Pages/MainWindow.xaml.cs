@@ -107,10 +107,12 @@ namespace BackgroundChanger.Pages
             LbInfos.Content = WebmPlayer.NaturalVideoWidth + " x " + WebmPlayer.NaturalVideoHeight
                               + " (" + WebmPlayer.NaturalDuration.TimeSpan.ToString(@"mm\:ss") + ")";
         }
-        private void SelectBtn_Click(object sender, RoutedEventArgs e)
+        private async void SelectBtn_Click(object sender, RoutedEventArgs e)
         {
-            MyFolders.UpdateBackground(this, MyFolders.RemoveUri(WebmPlayer.Source.ToString()));
-            this.ShowMessageAsync("Background changed", "Enjoy your new background !");
+            if (await MyFolders.UpdateBackground(this, MyFolders.RemoveUri(WebmPlayer.Source.ToString())))
+            {
+               await this.ShowMessageAsync("Background changed", "Enjoy your new background !");
+            }
         }
         private async void BtnRefresh_Click(object sender, RoutedEventArgs e) => await FillList();
 
