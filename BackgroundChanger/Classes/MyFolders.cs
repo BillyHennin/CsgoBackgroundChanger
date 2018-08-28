@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,6 +20,11 @@ namespace BackgroundChanger.Classes
 
         public static void CheckWebmFolder()
         {
+            if (!Directory.Exists(MyRegedit.MyWebmFolderPath))
+            {
+                MyRegedit.MyWebmFolderPath = string.Empty;
+            }
+
             if (MyRegedit.MyWebmFolderPath.Contains(DocFolderName))
             {
                 return;
@@ -37,10 +43,24 @@ namespace BackgroundChanger.Classes
             MyRegedit.MyWebmFolderPath = MyRegedit.MyWebmFolderPath + Format(DocFolderName);
         }
 
-        public static void UpdateWebFolder()
+        public static string UpdateWebFolder()
         {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                var result = fbd.ShowDialog();
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    MyRegedit.MyCsgoFolderPath = fbd.SelectedPath;
+                    //await CheckMyCsgoDir(window, false);
+                }
+                
+            }
             //TODO : Ask new folder
             //MyRegedit.MyWebmFolderPath = newFolder;
+
+
+
+            return MyRegedit.MyWebmFolderPath;
         }
 
         public static async Task<bool?> CheckMyCsgoDir(MetroWindow window, bool firstTime = true)
@@ -113,7 +133,6 @@ namespace BackgroundChanger.Classes
             File.Copy(webmPath, videoPath + Format("nuke.webm"));
             File.Copy(webmPath, videoPath + Format("nuke720.webm"));
             File.Copy(webmPath, videoPath + Format("nuke540.webm"));
-            //File.Move(newFilePath, 
         }
 
         public static string RemoveUri(string fulluri, string optionalRemove = "")
