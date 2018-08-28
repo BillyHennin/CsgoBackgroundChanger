@@ -16,6 +16,7 @@
         <controls:WindowCommands>
             <Button x:Name="BtnRefresh" Content="Refresh webm" Click="BtnRefresh_Click" />
             <Button x:Name="BtnChangeWebmFolder" Content="Change webm folder" Click="BtnChangeWebmFolder_Click" />
+            <Button x:Name="BtnChangeCsgoFolder" Content="Change CS:GO folder" Click="BtnChangeCSGOFolder_Click" />
         </controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
     <controls:MetroWindow.Flyouts>

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
 using BackgroundChanger.Classes;
 using MahApps.Metro.Controls.Dialogs;
@@ -133,10 +134,7 @@ namespace BackgroundChanger.Pages
             }
         }
 
-        private async void BtnRefresh_Click(object sender, RoutedEventArgs e)
-        {
-            await FillList();
-        }
+        private async void BtnRefresh_Click(object sender, RoutedEventArgs e) => await FillList();
 
         private async void BtnChangeWebmFolder_Click(object sender, RoutedEventArgs e)
         {
@@ -145,6 +143,30 @@ namespace BackgroundChanger.Pages
             if (result == MessageDialogResult.Affirmative)
             {
                 MyFolders.UpdateWebFolder();
+            }
+        }
+
+        private async void BtnChangeCSGOFolder_Click(object sender, RoutedEventArgs e)
+        {
+            var result = await this.ShowMessageAsync("Change your folder", "Do you want to change your CS:GO folder",
+                    MessageDialogStyle.AffirmativeAndNegative);
+            if (result == MessageDialogResult.Affirmative)
+            {
+                using (var fbd = new FolderBrowserDialog { Description = @"Select your CS:GO folder." })
+                {
+                    var resultFolder = fbd.ShowDialog();
+                    if (resultFolder == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                    {
+                        if (MyFolders.IsCsgoFolderValid())
+                        {
+                            MyRegedit.MyCsgoFolderPath = fbd.SelectedPath;
+                        }
+                        else
+                        {
+                            await this.ShowMessageAsync(DefError, "This application cannot work without a valid CS:GO folder.");
+                        }
+                    }
+                }
             }
         }
     }

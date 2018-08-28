@@ -88,7 +88,7 @@ namespace BackgroundChanger.Classes
             return false;
         }
 
-        private static bool IsCsgoFolderValid()
+        public static bool IsCsgoFolderValid()
         {
             var csgoFolder = MyRegedit.MyCsgoFolderPath;
             if (string.IsNullOrEmpty(csgoFolder))
