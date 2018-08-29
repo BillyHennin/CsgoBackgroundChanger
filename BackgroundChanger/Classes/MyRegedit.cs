@@ -41,12 +41,10 @@ namespace BackgroundChanger.Classes
             MyCsgoFolderPath = Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(MyCsgoKey).ToString();
         }
 
-        private static void SetValue(string key, string value)
-        {
-            Registry.CurrentUser.OpenSubKey(MyKey, true)?.SetValue(key, value);
-        }
+        private static void SetValue(string key, object value)
+            => Registry.CurrentUser.OpenSubKey(MyKey, true)?.SetValue(key, value);
 
-        private static string GetValue(string key) =>
-                Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(key).ToString();
+        private static string GetValue(string key) 
+            => Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(key).ToString();
     }
 }

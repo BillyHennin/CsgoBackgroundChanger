@@ -14,6 +14,7 @@
                  Icon="../Resources/csgo.ico">
     <controls:MetroWindow.RightWindowCommands>
         <controls:WindowCommands>
+            <Button x:Name="BtnUpdate" Content="Check for update" Click="BtnUpdate_Click" Visibility="Hidden"/>
             <Button x:Name="BtnRefresh" Content="Refresh webm" Click="BtnRefresh_Click" />
             <Button x:Name="BtnChangeWebmFolder" Content="Change webm folder" Click="BtnChangeWebmFolder_Click" />
             <Button x:Name="BtnChangeCsgoFolder" Content="Change CS:GO folder" Click="BtnChangeCSGOFolder_Click" />

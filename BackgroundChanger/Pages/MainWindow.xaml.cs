@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 using BackgroundChanger.Classes;
+using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
 namespace BackgroundChanger.Pages
@@ -28,7 +29,14 @@ namespace BackgroundChanger.Pages
             MyRegedit.CheckRegedit();
             if (await MyUpdate.CheckUpdate(this) == null)
             {
-                await FillList();
+                try
+                {
+                    await FillList();
+                }
+                catch
+                {
+                    //mh
+                }
             }
         }
 
@@ -133,6 +141,10 @@ namespace BackgroundChanger.Pages
             {
                 await this.ShowMessageAsync("Background changed", "Enjoy your new background !");
             }
+            else
+            {
+                await this.ShowMessageAsync(DefError, "This application cannot work without a specified Counter-Strike Global Offensive folder.");
+            }
         }
 
         private async void BtnRefresh_Click(object sender, RoutedEventArgs e) => await FillList();
@@ -174,5 +186,7 @@ namespace BackgroundChanger.Pages
                 }
             }
         }
+
+        private async void BtnUpdate_Click(object sender, RoutedEventArgs e) => await MyUpdate.CheckUpdate(this);
     }
 }

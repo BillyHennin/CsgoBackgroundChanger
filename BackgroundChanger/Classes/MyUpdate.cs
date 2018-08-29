@@ -4,6 +4,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using BackgroundChanger.Pages;
 using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json.Linq;
@@ -17,8 +18,12 @@ namespace BackgroundChanger.Classes
         private const string Descr = "Description";
         private const string Versi = "Version";
 
-        public static async Task<object> CheckUpdate(MainWindow window)
+        public static async Task<object> CheckUpdate(MainWindow mainWindow)
         {
+#if DEBUG
+            return null;
+#else
+            mainWindow.BtnUpdate.Visibility = Visibility.Visible;
             var request = (HttpWebRequest) WebRequest.Create(Url);
             try
             {
@@ -38,23 +43,23 @@ namespace BackgroundChanger.Classes
                     {
                         return null;
                     }
-
-                    window.UpdateFlyOut.IsOpen = true;
-                    window.LbTitleUpdate.Content = string.IsNullOrEmpty(result[Title].ToString())
-                            ? "A new update is available"
-                            : result[Title].ToString();
-                    window.LbDescUpdate.Content = string.IsNullOrEmpty(result[Descr].ToString())
-                            ? "Check the website for more infos."
-                            : result[Descr].ToString();
+                    mainWindow.UpdateFlyOut.IsOpen = true;
+                    mainWindow.LbTitleUpdate.Content = string.IsNullOrEmpty(result[Title].ToString())
+                              ? "A new update is available"
+                              : result[Title].ToString();
+                    mainWindow.LbDescUpdate.Content = string.IsNullOrEmpty(result[Descr].ToString())
+                              ? "Check the website for more infos."
+                              : result[Descr].ToString();
                     return null;
                 }
             }
             catch
             {
-                await window.ShowMessageAsync("Unable to check for a new version",
+                await mainWindow.ShowMessageAsync("Unable to check for a new version",
                         "An error has occured while checking for an update. You can still check the website by yourself.");
                 return null;
             }
+#endif
         }
     }
 }

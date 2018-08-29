@@ -9,7 +9,6 @@ namespace BackgroundChanger.Classes
 {
     public static class MyFolders
     {
-        private const string DocFolderName = "Webms";
         private const string Name = "nuke";
         private const string DefError = "Incorrect CS:GO folder";
         private const string Exe = "csgo";
@@ -17,39 +16,17 @@ namespace BackgroundChanger.Classes
 
         public static string[] GetAllWebm()
         {
-            CheckWebmFolder();
+            if (!Directory.Exists(MyRegedit.MyWebmFolderPath) || string.IsNullOrEmpty(MyRegedit.MyWebmFolderPath))
+            {
+                MyRegedit.MyWebmFolderPath = $"{Application.StartupPath}{Format("Webms")}";
+            }
             return Directory.GetFiles(MyRegedit.MyWebmFolderPath, $"*.{FilT}");
         }
-
-        public static void CheckWebmFolder()
-        {
-            if (!Directory.Exists(MyRegedit.MyWebmFolderPath))
-            {
-                MyRegedit.MyWebmFolderPath = string.Empty;
-            }
-
-            if (MyRegedit.MyWebmFolderPath.Contains(DocFolderName))
-            {
-                return;
-            }
-
-            if (string.IsNullOrEmpty(MyRegedit.MyWebmFolderPath))
-            {
-                MyRegedit.MyWebmFolderPath = Application.StartupPath;
-            }
-
-            if (!Directory.GetDirectories(MyRegedit.MyWebmFolderPath).Contains(DocFolderName))
-            {
-                Directory.CreateDirectory(MyRegedit.MyWebmFolderPath + Format(DocFolderName));
-            }
-
-            MyRegedit.MyWebmFolderPath = MyRegedit.MyWebmFolderPath + Format(DocFolderName);
-        }
+        
 
         public static string UpdateWebFolder()
         {
-            using (var fbd =
-                    new FolderBrowserDialog {Description = @"Select your webm folder.", ShowNewFolderButton = true})
+            using (var fbd = new FolderBrowserDialog {Description = @"Select your webm folder.", ShowNewFolderButton = true})
             {
                 var result = fbd.ShowDialog();
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
@@ -68,51 +45,36 @@ namespace BackgroundChanger.Classes
                 return true;
             }
 
-            await window.ShowMessageAsync(DefError, "Please select your Counter-Strike Global OffensiveMain folder");
+            await window.ShowMessageAsync(DefError, "Please select your Counter-Strike Global Offensive Main folder");
             using (var fbd = new FolderBrowserDialog {Description = @"Select your Counter-Strike Global Offensive Main folder." })
             {
                 var result = fbd.ShowDialog();
-                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                if (result != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
-                    MyRegedit.MyCsgoFolderPath = fbd.SelectedPath;
-                    await CheckMyCsgoDir(window, false);
+                    return false;
                 }
+                MyRegedit.MyCsgoFolderPath = fbd.SelectedPath;
+                return await CheckMyCsgoDir(window, false);
             }
-
-            if (!firstTime)
-            {
-                return null;
-            }
-
-            await window.ShowMessageAsync(DefError, "This application cannot work without a specified Counter-Strike Global Offensive folder.");
-            return false;
         }
 
         public static bool IsCsgoFolderValid(string strPath = "")
         {
-            if (string.IsNullOrEmpty(strPath))
-            {
-                strPath = MyRegedit.MyCsgoFolderPath;
-            }
-            var csgoFolder = strPath;
+            var csgoFolder = string.IsNullOrEmpty(strPath) ? MyRegedit.MyCsgoFolderPath : strPath;
             if (string.IsNullOrEmpty(csgoFolder))
             {
                 return false;
             }
-
-            var csgoFolders = Directory.GetDirectories(csgoFolder);
-            var csgoFiles = Directory.GetFiles(csgoFolder);
-            return csgoFiles.Contains($"{csgoFolder}{Format($"{Exe}.exe")}") &&
-                   csgoFolders.Contains($"{csgoFolder}{Format(Exe)}") &&
-                   Directory.GetDirectories($"{csgoFolder}{Format(Exe)}")
-                           .Contains($"{csgoFolder}{Format(Exe, "panorama")}") && Directory
-                           .GetDirectories($"{csgoFolder}{Format(Exe, "panorama")}")
-                           .Contains($"{csgoFolder}{Format(Exe, "panorama", "videos")}");
+            var curFolder = $"{csgoFolder}{Format(Exe)}";
+            var result = Directory.GetFiles(csgoFolder).Contains($"{curFolder}.exe");
+            result = result && Directory.GetDirectories(csgoFolder).Contains($"{curFolder}");            
+            result = result && Directory.GetDirectories(curFolder).Contains($"{curFolder}{Format("panorama")}");
+            curFolder += Format("panorama");
+            return result && Directory.GetDirectories(curFolder).Contains($"{curFolder}{Format("videos")}");
         }
 
         public static async Task<bool> UpdateBackground(MetroWindow window, string newFilePath)
         {
-            //TODO : Check everything
             var isValid = await CheckMyCsgoDir(window);
             if (!isValid.Value)
             {
@@ -138,19 +100,17 @@ namespace BackgroundChanger.Classes
             return true;
         }
 
-        public static string RemoveUri(string fulluri, string optionalRemove = "")
+        public static string RemoveUri(string fulluri, string remove = "")
         {
-            optionalRemove = string.IsNullOrEmpty(optionalRemove)
+            remove = string.IsNullOrEmpty(remove)
                     ? $"{MyRegedit.MyWebmFolderPath.Replace("\\", "/")}/"
-                    : optionalRemove;
-            fulluri = fulluri.Replace("file:///", string.Empty).Replace(optionalRemove, string.Empty)
+                    : remove;
+            fulluri = fulluri.Replace("file:///", string.Empty).Replace(remove, string.Empty)
                     .Replace($".{FilT}", string.Empty);
             return $"{fulluri.First().ToString().ToUpper()}{fulluri.Substring(1)}";
         }
 
-        private static string Format(params string[] str)
-        {
-            return str.Aggregate(string.Empty, (curr, st) => $"{curr}\\{st}");
-        }
+        private static string Format(params string[] str) 
+            => str.Aggregate(string.Empty, (curr, st) => $"{curr}\\{st}");
     }
 }
