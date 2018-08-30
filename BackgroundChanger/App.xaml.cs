@@ -6,7 +6,5 @@ namespace BackgroundChanger
     /// <summary>
     ///     Logique d'interaction pour App.xaml
     /// </summary>
-    public class App : Application
-    {
-    }
+    public class App : Application { }
 }

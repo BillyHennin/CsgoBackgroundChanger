@@ -5,15 +5,14 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 using BackgroundChanger.Classes;
-using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
 namespace BackgroundChanger.Pages
 {
-    /// <inheritdoc cref="" />
     /// <summary>
     ///     Logique d'interaction pour MainWindow.xaml
     /// </summary>
+    // ReSharper disable once InheritdocConsiderUsage
     public partial class MainWindow
     {
         private const string DefError = "Error !";
@@ -21,40 +20,46 @@ namespace BackgroundChanger.Pages
         public MainWindow()
         {
             InitializeComponent();
+            //Needs to be on a separate func cause async
             InitWindow();
         }
 
         public async void InitWindow()
         {
-            MyRegedit.CheckRegedit();
-            if (await MyUpdate.CheckUpdate(this) == null)
+            Csgo.ShowAlert(this);
+            //Check if regedit is set up
+            Regedit.CheckRegedit();
+            //Wait for the app to check for update
+            if (await Update.CheckUpdate(this) == null)
             {
-                try
-                {
-                    await FillList();
-                }
-                catch
-                {
-                    //mh
-                }
+                //Once it's done, fill the listview with videos
+                await FillList();
             }
+            
         }
 
-        private void SetVisibility(bool isVisible)
-        {
-            WebmPlayer.Visibility = LbTitle.Visibility = LbInfos.Visibility =
-                    SelectBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
-        }
+        /// <summary>
+        /// Updates visibility param for some element in the page
+        /// </summary>
+        /// <param name="isVisible">True or False</param>
+        private void SetVisibility(bool isVisible) =>
+                WebmPlayer.Visibility = LbTitle.Visibility = LbInfos.Visibility =
+                        SelectBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>Void</returns>
         public async Task FillList()
         {
-            var allWebm = MyFolders.GetAllWebm();
+            var allWebm = Folders.GetAllWebm();
             if (allWebm.Length == 0)
             {
                 allWebm = await LoopUpdateFolder();
             }
 
             const string msg = "Loading webm.... ";
+            //Init the progress dialog
             var controller = await this.ShowProgressAsync("Please wait", msg);
             controller.SetIndeterminate();
             WebmList.Items.Clear();
@@ -72,11 +77,13 @@ namespace BackgroundChanger.Pages
                         Stretch = Stretch.Fill,
                         Margin = new Thickness(0, 5, 0, 5)
                 });
+                //Let the user know how the progress is going
                 controller.SetProgress(y += progress);
                 controller.SetMessage($"{msg} {y++}/{allWebm.Length}");
+                //Ikr, but the progress is lit af
                 await Task.Delay(800 / allWebm.Length);
             }
-
+            //Once it's down, close the controller
             await controller.CloseAsync().ConfigureAwait(false);
         }
 
@@ -89,15 +96,15 @@ namespace BackgroundChanger.Pages
                         MessageDialogStyle.AffirmativeAndNegative);
                 if (result == MessageDialogResult.Affirmative)
                 {
-                    MyFolders.UpdateWebFolder();
+                    Folders.UpdateWebmFolder();
                 }
             }
             else
             {
-                MyFolders.UpdateWebFolder();
+                Folders.UpdateWebmFolder();
             }
 
-            var allWebm = MyFolders.GetAllWebm();
+            var allWebm = Folders.GetAllWebm();
             // ReSharper disable once InvertIf
             if (allWebm.Length == 0)
             {
@@ -106,12 +113,11 @@ namespace BackgroundChanger.Pages
                         MessageDialogStyle.AffirmativeAndNegative);
                 if (result2 == MessageDialogResult.Affirmative)
                 {
-                    await LoopUpdateFolder(false);
+                    // ReSharper disable once TailRecursiveCall
+                    return await LoopUpdateFolder(false);
                 }
-
                 Environment.Exit(1);
             }
-
             return allWebm;
         }
 
@@ -119,6 +125,7 @@ namespace BackgroundChanger.Pages
         {
             if (WebmList.SelectedItem == null)
             {
+                InfoBtn.Visibility = Visibility.Hidden;
                 SetVisibility(false);
             }
             else
@@ -130,14 +137,28 @@ namespace BackgroundChanger.Pages
 
         private void WebmPlayer_MediaOpened(object sender, RoutedEventArgs e)
         {
-            LbTitle.Content = MyFolders.RemoveUri(WebmPlayer.Source.ToString());
-            LbInfos.Content =
-                    $"{WebmPlayer.NaturalVideoWidth} x {WebmPlayer.NaturalVideoHeight} ({WebmPlayer.NaturalDuration.TimeSpan:mm\\:ss})";
+            InfoBtn.Visibility = Visibility.Visible;
+            LbTitle.Content = Folders.GetFileName(WebmPlayer.Source.AbsolutePath);
+            if (!WebmPlayer.NaturalDuration.HasTimeSpan) { return; }
+            var duration = string.Empty;
+            try
+            {
+                duration = $"{WebmPlayer.NaturalDuration.TimeSpan:mm\\:ss}";
+            }
+            finally
+            {
+                LbInfos.Content = $"{WebmPlayer.NaturalVideoWidth} x {WebmPlayer.NaturalVideoHeight} ({duration})";
+            }
         }
 
         private async void SelectBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (await MyFolders.UpdateBackground(this, MyFolders.RemoveUri(WebmPlayer.Source.ToString())))
+            if(Csgo.ShowAlert(this))
+            {
+                await this.ShowMessageAsync(DefError, "Please close your game.");
+                return;
+            }
+            if (await Folders.UpdateBackground(this, WebmPlayer.Source.AbsolutePath.Replace("%20", " ")))
             {
                 await this.ShowMessageAsync("Background changed", "Enjoy your new background !");
             }
@@ -151,18 +172,16 @@ namespace BackgroundChanger.Pages
 
         private async void BtnChangeWebmFolder_Click(object sender, RoutedEventArgs e)
         {
-            var result = await this.ShowMessageAsync("Change your folder", "Do you want to change your webm folder",
-                    MessageDialogStyle.AffirmativeAndNegative);
+            var result = await this.ShowMessageAsync("Change your folder", "Do you want to change your webm folder", MessageDialogStyle.AffirmativeAndNegative);
             if (result == MessageDialogResult.Affirmative)
             {
-                MyFolders.UpdateWebFolder();
+                Folders.UpdateWebmFolder();
             }
         }
 
         private async void BtnChangeCSGOFolder_Click(object sender, RoutedEventArgs e)
         {
-            var result = await this.ShowMessageAsync("Change your folder", "Do you want to change your Counter-Strike Global Offensive folder",
-                    MessageDialogStyle.AffirmativeAndNegative);
+            var result = await this.ShowMessageAsync("Change your folder", "Do you want to change your Counter-Strike Global Offensive folder", MessageDialogStyle.AffirmativeAndNegative);
             if (result != MessageDialogResult.Affirmative)
             {
                 return;
@@ -176,9 +195,9 @@ namespace BackgroundChanger.Pages
                     return;
                 }
 
-                if (MyFolders.IsCsgoFolderValid(fbd.SelectedPath))
+                if (Folders.IsCsgoFolderValid(fbd.SelectedPath))
                 {
-                    MyRegedit.MyCsgoFolderPath = fbd.SelectedPath;
+                    Regedit.MyCsgoFolderPath = fbd.SelectedPath;
                 }
                 else
                 {
@@ -187,6 +206,22 @@ namespace BackgroundChanger.Pages
             }
         }
 
-        private async void BtnUpdate_Click(object sender, RoutedEventArgs e) => await MyUpdate.CheckUpdate(this);
+        private async void BtnUpdate_Click(object sender, RoutedEventArgs e) => await Update.CheckUpdate(this);
+
+        private void InfoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var text  = $"Video size : {WebmPlayer.NaturalVideoWidth} x {WebmPlayer.NaturalVideoHeight}\n";
+                text += $"Video length : {WebmPlayer.NaturalDuration.TimeSpan:mm\\:ss}\n";
+                text += $"Video has audio : {(WebmPlayer.HasAudio ? "Yes" : "No")}\n";
+                text += $"File size : {Folders.FileSize(WebmPlayer.Source.AbsolutePath.Replace("%20", " "))}\n";
+            this.ShowMessageAsync(LbTitle.Content.ToString(), text);
+        }
+
+        private async void LbAlertCsgo_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            //TODO : Add fadeout + cancelable with click + add click on X on right of the label
+            await Task.Delay(5000);
+            LbAlertCsgo.Visibility = Visibility.Hidden;
+        }
     }
 }

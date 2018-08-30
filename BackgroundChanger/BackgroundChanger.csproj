@@ -116,9 +116,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Classes\MyFolders.cs" />
-    <Compile Include="Classes\MyRegedit.cs" />
-    <Compile Include="Classes\MyUpdate.cs" />
+    <Compile Include="Classes\Csgo.cs" />
+    <Compile Include="Classes\Folders.cs" />
+    <Compile Include="Classes\Regedit.cs" />
+    <Compile Include="Classes\Update.cs" />
     <Compile Include="Pages\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -160,9 +161,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\WindowsIcons-license.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />

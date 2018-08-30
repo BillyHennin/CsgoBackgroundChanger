@@ -1,4 +1,7 @@
-﻿using System;
+﻿//#if DEBUG Cause ReSharper to be retarded
+// ReSharper disable All
+
+using System;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -11,7 +14,10 @@ using Newtonsoft.Json.Linq;
 
 namespace BackgroundChanger.Classes
 {
-    public static class MyUpdate
+    /// <summary>
+    /// Class purpose : Check updates
+    /// </summary>
+    public static class Update
     {
         private const string Url = "https://billyhennin.github.io/CsgoBackgroundChanger/";
         private const string Title = "Title";
@@ -21,6 +27,7 @@ namespace BackgroundChanger.Classes
         public static async Task<object> CheckUpdate(MainWindow mainWindow)
         {
 #if DEBUG
+            //if we're in debug, no need to check for update
             return null;
 #else
             mainWindow.BtnUpdate.Visibility = Visibility.Visible;
