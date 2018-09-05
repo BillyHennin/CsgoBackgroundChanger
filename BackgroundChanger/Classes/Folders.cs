@@ -15,6 +15,10 @@ namespace BackgroundChanger.Classes
         private const string Exe = "csgo";
         private const string FilT = "webm";
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static string[] GetAllWebm()
         {
             if (!Directory.Exists(Regedit.MyWebmFolderPath) || string.IsNullOrEmpty(Regedit.MyWebmFolderPath))
@@ -25,6 +29,10 @@ namespace BackgroundChanger.Classes
                     ? new string[0] 
                     : Directory.GetFiles(Regedit.MyWebmFolderPath, $"*.{FilT}").OrderBy(c => c).ToArray();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static string UpdateWebmFolder()
         {
             using (var fbd = new FolderBrowserDialog { Description = @"Select your webm folder.", ShowNewFolderButton = true })
@@ -37,9 +45,15 @@ namespace BackgroundChanger.Classes
             }
             return Regedit.MyWebmFolderPath;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="window"></param>
+        /// <param name="firstTime"></param>
+        /// <returns></returns>
         public static async Task<bool?> CheckMyCsgoDir(MetroWindow window, bool firstTime = true)
         {
-            if (IsCsgoFolderValid())
+            if (IsCsgoFolderValid(Regedit.MyCsgoFolderPath))
             {
                 return true;
             }
@@ -54,22 +68,26 @@ namespace BackgroundChanger.Classes
             }
         }
 
-        public static bool IsCsgoFolderValid(string strPath = "")
+        /// <summary>
+        /// Check if the path asserted is a valid csgo folder or not
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>True if valid</returns>
+        public static bool IsCsgoFolderValid(string path)
         {
-            var csgoFolder = string.IsNullOrEmpty(strPath) ? Regedit.MyCsgoFolderPath : strPath;
-            if (string.IsNullOrEmpty(csgoFolder))
+            if (string.IsNullOrEmpty(path))
             {
                 return false;
             }
-            var curFolder = $"{csgoFolder}{Format(Exe)}";
-            var result = Directory.GetFiles(csgoFolder).Contains($"{curFolder}.exe");
-                result = result && Directory.GetDirectories(csgoFolder).Contains($"{curFolder}");            
+            var curFolder = $"{path}{Format(Exe)}";
+            var result = Directory.GetFiles(path).Contains($"{curFolder}.exe");
+                result = result && Directory.GetDirectories(path).Contains($"{curFolder}");            
                 result = result && Directory.GetDirectories(curFolder).Contains($"{curFolder}{Format("panorama")}");
             curFolder += Format("panorama");
             return result && Directory.GetDirectories(curFolder).Contains($"{curFolder}{Format("videos")}");
         }
 
-        public static async Task<bool> UpdateBackground(MetroWindow window, string newFilePath)
+        public static async Task<bool> UpdateBackground(MetroWindow window, string path)
         {
             //if the csgo folder isn't valid, don't bother
             var isValid = await CheckMyCsgoDir(window);
@@ -86,20 +104,20 @@ namespace BackgroundChanger.Classes
                 File.Copy($"{videoPath}{Format($"{Name}540.{FilT}")}", $"{videoPath}{Format($"{Name}540.{FilT}.tmp")}");
             }
             //Update the background and overwrite the old ones
-            File.Copy(newFilePath, $"{videoPath}{Format($"{Name}.{FilT}")}", true);
-            File.Copy(newFilePath, $"{videoPath}{Format($"{Name}720.{FilT}")}", true);
-            File.Copy(newFilePath, $"{videoPath}{Format($"{Name}540.{FilT}")}", true);
+            File.Copy(path, $"{videoPath}{Format($"{Name}.{FilT}")}", true);
+            File.Copy(path, $"{videoPath}{Format($"{Name}720.{FilT}")}", true);
+            File.Copy(path, $"{videoPath}{Format($"{Name}540.{FilT}")}", true);
             return true;
         }
 
-        public static string GetFileName(string fulluri)
+        public static string GetFileName(string uri)
         {
             //"BlaBlaBla\\mywebms\\nuke .webm" to "nuke .webm"
-            fulluri = fulluri.Replace($"{Regedit.MyWebmFolderPath.Replace(@"\", "/")}/", string.Empty);
+            uri = uri.Replace($"{Regedit.MyWebmFolderPath.Replace(@"\", "/")}/", string.Empty);
             //"nuke .webm" to "nuke"
-            fulluri = fulluri.Replace("%20", " ").Replace($".{FilT}", string.Empty).Replace("-", " ").Replace("_", " ");
+            uri = uri.Replace("%20", " ").Replace($".{FilT}", string.Empty).Replace("-", " ").Replace("_", " ");
             //"nuke to Nuke"
-            return $"{fulluri.First().ToString().ToUpper()}{fulluri.Substring(1)}";
+            return $"{uri.First().ToString().ToUpper()}{uri.Substring(1)}";
         }
 
         /// <summary>

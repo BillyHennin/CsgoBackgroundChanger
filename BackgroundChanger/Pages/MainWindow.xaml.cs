@@ -26,7 +26,7 @@ namespace BackgroundChanger.Pages
 
         public async void InitWindow()
         {
-            Csgo.ShowAlert(this);
+            await MonitorProcess.InitMonitoringAsync(this);
             //Check if regedit is set up
             Regedit.CheckRegedit();
             //Wait for the app to check for update
@@ -41,10 +41,10 @@ namespace BackgroundChanger.Pages
         /// <summary>
         /// Updates visibility param for some element in the page
         /// </summary>
-        /// <param name="isVisible">True or False</param>
-        private void SetVisibility(bool isVisible) =>
+        /// <param name="visible">True or False</param>
+        private void SetVisibility(bool visible) =>
                 WebmPlayer.Visibility = LbTitle.Visibility = LbInfos.Visibility =
-                        SelectBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
+                        BtnSelect.Visibility = visible ? Visibility.Visible : Visibility.Hidden;
 
         /// <summary>
         /// 
@@ -55,7 +55,7 @@ namespace BackgroundChanger.Pages
             var allWebm = Folders.GetAllWebm();
             if (allWebm.Length == 0)
             {
-                allWebm = await LoopUpdateFolder();
+                allWebm = await UpdateFolder();
             }
 
             const string msg = "Loading webm.... ";
@@ -87,7 +87,7 @@ namespace BackgroundChanger.Pages
             await controller.CloseAsync().ConfigureAwait(false);
         }
 
-        private async Task<string[]> LoopUpdateFolder(bool firstTime = true)
+        private async Task<string[]> UpdateFolder(bool firstTime = true)
         {
             if (firstTime)
             {
@@ -114,7 +114,7 @@ namespace BackgroundChanger.Pages
                 if (result2 == MessageDialogResult.Affirmative)
                 {
                     // ReSharper disable once TailRecursiveCall
-                    return await LoopUpdateFolder(false);
+                    return await UpdateFolder(false);
                 }
                 Environment.Exit(1);
             }
@@ -151,9 +151,9 @@ namespace BackgroundChanger.Pages
             }
         }
 
-        private async void SelectBtn_Click(object sender, RoutedEventArgs e)
+        private async void BtnSelect_Click(object sender, RoutedEventArgs e)
         {
-            if(Csgo.ShowAlert(this))
+            if(MonitorProcess.IsCSOpen())
             {
                 await this.ShowMessageAsync(DefError, "Please close your game.");
                 return;
@@ -215,13 +215,6 @@ namespace BackgroundChanger.Pages
                 text += $"Video has audio : {(WebmPlayer.HasAudio ? "Yes" : "No")}\n";
                 text += $"File size : {Folders.FileSize(WebmPlayer.Source.AbsolutePath.Replace("%20", " "))}\n";
             this.ShowMessageAsync(LbTitle.Content.ToString(), text);
-        }
-
-        private async void LbAlertCsgo_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            //TODO : Add fadeout + cancelable with click + add click on X on right of the label
-            await Task.Delay(5000);
-            LbAlertCsgo.Visibility = Visibility.Hidden;
         }
     }
 }

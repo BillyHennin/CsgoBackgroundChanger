@@ -50,8 +50,8 @@ namespace BackgroundChanger.Classes
             MyCsgoFolderPath = Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(MyCsgoKey).ToString();
         }
         //on set : update the regedit
-        private static void SetValue(string key, object value)
-            => Registry.CurrentUser.OpenSubKey(MyKey, true)?.SetValue(key, value);
+        private static void SetValue(string key, object val)
+            => Registry.CurrentUser.OpenSubKey(MyKey, true)?.SetValue(key, val);
         //on get : check the regedit
         private static string GetValue(string key) 
             => Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(key).ToString();

@@ -24,13 +24,18 @@ namespace BackgroundChanger.Classes
         private const string Descr = "Description";
         private const string Versi = "Version";
 
-        public static async Task<object> CheckUpdate(MainWindow mainWindow)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="window"></param>
+        /// <returns></returns>
+        public static async Task<object> CheckUpdate(MainWindow window)
         {
 #if DEBUG
             //if we're in debug, no need to check for update
             return null;
 #else
-            mainWindow.BtnUpdate.Visibility = Visibility.Visible;
+            window.BtnUpdate.Visibility = Visibility.Visible;
             var request = (HttpWebRequest) WebRequest.Create(Url);
             try
             {
@@ -50,19 +55,19 @@ namespace BackgroundChanger.Classes
                     {
                         return null;
                     }
-                    mainWindow.UpdateFlyOut.IsOpen = true;
-                    mainWindow.LbTitleUpdate.Content = string.IsNullOrEmpty(result[Title].ToString())
-                              ? "A new update is available"
-                              : result[Title].ToString();
-                    mainWindow.LbDescUpdate.Content = string.IsNullOrEmpty(result[Descr].ToString())
-                              ? "Check the website for more infos."
-                              : result[Descr].ToString();
+                    window.UpdateFlyOut.IsOpen = true;
+                    window.LbTitleUpdate.Content = string.IsNullOrEmpty(result[Title].ToString())
+                           ? "A new update is available"
+                           : result[Title].ToString();
+                    window.LbDescUpdate.Content = string.IsNullOrEmpty(result[Descr].ToString())
+                           ? "Check the website for more infos."
+                           : result[Descr].ToString();
                     return null;
                 }
             }
             catch
             {
-                await mainWindow.ShowMessageAsync("Unable to check for a new version",
+                await window.ShowMessageAsync("Unable to check for a new version",
                         "An error has occured while checking for an update. You can still check the website by yourself.");
                 return null;
             }

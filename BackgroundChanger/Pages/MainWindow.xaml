@@ -41,7 +41,8 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="343*" />
                 <ColumnDefinition Width="23*" />
-                <ColumnDefinition Width="801*" />
+                <ColumnDefinition Width="537*" />
+                <ColumnDefinition Width="264*"/>
                 <ColumnDefinition Width="27*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -58,28 +59,29 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <Label Content="CS:GO MUST BE CLOSED" x:Name="LbAlertCsgo" HorizontalAlignment="Center" VerticalAlignment="Center"
-                   Grid.Row="0" Grid.ColumnSpan="4" Grid.Column="0" Height="44" Width="1200" Background="#FFF50057" FontWeight="Bold" Visibility="Hidden"
-                   FontSize="20" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Panel.ZIndex="1" Margin="0,0,-6,0" IsVisibleChanged="LbAlertCsgo_IsVisibleChanged"/>
 
-            <Label x:Name="LbTitle" Content="" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right"
+
+            <Label x:Name="LbTitle" Content="" Grid.Row="0" HorizontalAlignment="Right"
                    VerticalAlignment="Bottom" Height="38" Width="399" FontWeight="Bold" FontStyle="Italic"
-                   FontSize="24" Margin="0,0,402,0" Visibility="Hidden" />
+                   FontSize="24" Margin="0,0,146,0" Visibility="Hidden" Grid.ColumnSpan="2" Grid.Column="1" />
             <Label x:Name="LbInfos" Content="" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right"
                    VerticalAlignment="Bottom" Height="38" Width="399" FontWeight="Bold" FontStyle="Italic"
-                   FontSize="24" Visibility="Hidden" />
+                   FontSize="24" Visibility="Hidden" Grid.ColumnSpan="2" />
 
             <MediaElement x:Name="WebmPlayer" Grid.Column="2" HorizontalAlignment="Left" Height="450" Grid.Row="2" Visibility="Hidden"
-                          VerticalAlignment="Top" Width="800" IsMuted="True" MediaOpened="WebmPlayer_MediaOpened" />
+                          VerticalAlignment="Top" Width="800" IsMuted="True" MediaOpened="WebmPlayer_MediaOpened" Grid.ColumnSpan="2" />
 
             <Button x:Name="InfoBtn" Content="File info" Grid.Column="2" Margin="0,476,0,45" Grid.Row="2"
                     Background="#FF1976D2" BorderThickness="1" TabIndex="-7" Focusable="False"
                     RenderTransformOrigin="0.5,0.5" Click="InfoBtn_Click" HorizontalAlignment="Left" Width="130"
                     FontSize="16" Visibility="Hidden"/>
-            <Button x:Name="SelectBtn" Content="Update" Grid.Column="2" Margin="670,476,0,45" Grid.Row="2"
+            <Label Content="CS:GO MUST BE CLOSED" x:Name="LbAlertCsgo" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Grid.Row="2" Height="44" Width="264" Background="#FFF50057" FontWeight="Bold" Visibility="Hidden"
+                   FontSize="20" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Panel.ZIndex="1" Margin="0,471,0,41" Grid.Column="3"/>
+            <Button x:Name="BtnSelect" Content="Update" Grid.Column="3" Margin="125,476,0,45" Grid.Row="2"
                     Background="#FF81C784" BorderThickness="1" TabIndex="-7" Focusable="False"
-                    RenderTransformOrigin="0.5,0.5" Click="SelectBtn_Click" HorizontalAlignment="Left" Width="130"
-                    FontSize="16" Visibility="Hidden" />
+                    RenderTransformOrigin="0.5,0.5" Click="BtnSelect_Click" HorizontalAlignment="Left" Width="130"
+                    FontSize="16" Visibility="Hidden"/>
         </Grid>
     </Grid>
 </mah:MetroWindow>
