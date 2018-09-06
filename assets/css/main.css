@@ -45,10 +45,12 @@ blockquote, q {
 	quotes: none;
 }
 
-	blockquote:before, blockquote:after, q:before, q:after {
-		content: '';
-		content: none;
-	}
+   
+
+    blockquote:before, blockquote:after, q:before, q:after {
+        content: '';
+        content: none;
+    }
 
 table {
 	border-collapse: collapse;
@@ -102,13 +104,24 @@ input, select, textarea {
 		box-sizing: inherit;
 	}
 
-	body {
-		background-color: #2e3141;
-		background-image: linear-gradient(to top, rgba(46, 49, 65, 0.8), rgba(46, 49, 65, 0.8)), url("../../images/bg.jpg");
-		background-size: auto, cover;
-		background-attachment: fixed, fixed;
-		background-position: center, center;
-	}
+    .fullscreen-bg__video {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+        z-index: -10;
+        width: 100%;
+    }
+
+    body {
+        background-color: #2e3141;
+        background-image: linear-gradient(to top, rgba(46, 49, 65, 0.8), rgba(46, 49, 65, 0.8)), url("../../images/bg.jpg");
+        background-size: auto, cover;
+        background-attachment: fixed, fixed;
+        background-position: center, center;
+    }
 
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
 			-moz-animation: none !important;
