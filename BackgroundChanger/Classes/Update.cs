@@ -19,16 +19,16 @@ namespace BackgroundChanger.Classes
     /// </summary>
     public static class Update
     {
-        private const string Url = "https://billyhennin.github.io/CsgoBackgroundChanger/";
+        private const string Url = "https://billyhennin.github.io/CsgoBackgroundChanger/version.json";
         private const string Title = "Title";
         private const string Descr = "Description";
         private const string Versi = "Version";
 
         /// <summary>
-        /// 
+        /// Allow the app to check if its up to date or if there's any new version available
         /// </summary>
-        /// <param name="window"></param>
-        /// <returns></returns>
+        /// <param name="window">Main window of the app, will be used later on</param>
+        /// <returns>Return null to show that the task is completed (dumb ikr)</returns>
         public static async Task<object> CheckUpdate(MainWindow window)
         {
 #if DEBUG
@@ -59,7 +59,7 @@ namespace BackgroundChanger.Classes
                     window.LbTitleUpdate.Content = string.IsNullOrEmpty(result[Title].ToString())
                            ? "A new update is available"
                            : result[Title].ToString();
-                    window.LbDescUpdate.Content = string.IsNullOrEmpty(result[Descr].ToString())
+                    window.LbDescUpdate.Text = string.IsNullOrEmpty(result[Descr].ToString())
                            ? "Check the website for more infos."
                            : result[Descr].ToString();
                     return null;

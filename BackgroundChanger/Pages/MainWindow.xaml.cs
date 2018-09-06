@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -181,8 +182,7 @@ namespace BackgroundChanger.Pages
 
         private async void BtnChangeCSGOFolder_Click(object sender, RoutedEventArgs e)
         {
-            var result = await this.ShowMessageAsync("Change your folder", "Do you want to change your Counter-Strike Global Offensive folder", MessageDialogStyle.AffirmativeAndNegative);
-            if (result != MessageDialogResult.Affirmative)
+            if (await (this).ShowMessageAsync("Change your folder", "Do you want to change your Counter-Strike Global Offensive folder", MessageDialogStyle.AffirmativeAndNegative) != MessageDialogResult.Affirmative)
             {
                 return;
             }
@@ -206,7 +206,7 @@ namespace BackgroundChanger.Pages
             }
         }
 
-        private async void BtnUpdate_Click(object sender, RoutedEventArgs e) => await Update.CheckUpdate(this);
+        private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e) => await Update.CheckUpdate(this);
 
         private void InfoBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -216,5 +216,12 @@ namespace BackgroundChanger.Pages
                 text += $"File size : {Folders.FileSize(WebmPlayer.Source.AbsolutePath.Replace("%20", " "))}\n";
             this.ShowMessageAsync(LbTitle.Content.ToString(), text);
         }
+
+        private void BtnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("https://github.com/BillyHennin/CsgoBackgroundChanger/releases");
+            UpdateFlyOut.IsOpen = false;
+        } 
+            
     }
 }
