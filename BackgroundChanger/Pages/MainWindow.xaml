@@ -27,6 +27,8 @@
                 <Grid>
                     <Label x:Name="LbTitleUpdate" FontSize="24" FontWeight="Bold" VerticalAlignment="Top" Margin="10,0,0,0" />
                     <TextBlock x:Name="LbDescUpdate" FontSize="14" FontWeight="Bold" Margin="25,50,0,0" MaxWidth="350" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow"/>
+                    <Button x:Name="BtnNoUpdate" Width="200" FontSize="16" FontWeight="Bold" Height="35" HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom" Margin="20,0,0,40" Content="Don't ask me again" Background="#e91e63" Click="BtnNoUpdate_Click" />
                     <Button x:Name="BtnUpdate" Width="130" FontSize="16" FontWeight="Bold" Height="35" HorizontalAlignment="Right"
                             VerticalAlignment="Bottom" Margin="0,0,40,40" Content="Download" Background="#FF1976D2" Click="BtnUpdate_Click" />
                 </Grid>

@@ -224,5 +224,7 @@ namespace BackgroundChanger.Pages
 
         private void BtnNewFiles_Click(object sender, RoutedEventArgs e) 
             => Process.Start("https://billyhennin.github.io/CsgoBackgroundChanger/backgrounds.html");
+
+        private void BtnNoUpdate_Click(object sender, RoutedEventArgs e) => Regedit.DontAskUpdate = "1";
     }
 }

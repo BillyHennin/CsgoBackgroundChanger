@@ -37,6 +37,10 @@ namespace BackgroundChanger.Classes
 #else
             window.BtnUpdate.Visibility = Visibility.Visible;
             var request = (HttpWebRequest) WebRequest.Create(Url);
+            if(!string.IsNullOrEmpty(Regedit.DontAskUpdate))
+            {
+                return null;
+            }
             try
             {
                 var response = request.GetResponse();

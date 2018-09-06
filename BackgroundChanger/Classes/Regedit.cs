@@ -15,6 +15,7 @@ namespace BackgroundChanger.Classes
         private const string MyWebmKey = "WebmFolder";
         private const string MyCsgoKey = "CsgoFolder";
         private const string MyAskAdmin = "NoAdmin";
+        private const string AskUpdate = "NoUpdate";
         private const string CurrentVer = "CurrentVersion";
 
         public static string MyWebmFolderPath
@@ -39,6 +40,12 @@ namespace BackgroundChanger.Classes
         {
             get => GetValue(CurrentVer);
             set => SetValue(CurrentVer, value);
+        }
+
+        public static string DontAskUpdate
+        {
+            get => GetValue(AskUpdate);
+            set => SetValue(AskUpdate, value);
         }
 
         /// <summary>
@@ -67,6 +74,11 @@ namespace BackgroundChanger.Classes
                 SetValue(MyAskAdmin, string.Empty);
             }
 
+            if (Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(AskUpdate) == null)
+            {
+                SetValue(AskUpdate, string.Empty);
+            }
+
             if (Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(CurrentVer) == null)
             {
                 SetValue(CurrentVer, Update.GetVersion());
@@ -75,7 +87,7 @@ namespace BackgroundChanger.Classes
             if (Update.CompareVerion(CurrentVersion))
             {
                 CurrentVersion = Update.GetVersion();
-                DontAskAdmin = string.Empty;
+                //DontAskUpdate = string.Empty;
             }
         }
         //on set : update the regedit
