@@ -38,7 +38,17 @@ namespace BackgroundChanger.Classes
                     }
                 } else
                 {
-                    await window.ShowMessageAsync("Warning", $"Unable to monitor if CSGO is open, please open {Assembly.GetExecutingAssembly().GetName().Name} with admin privilege");
+                    if(Regedit.DontAskAdmin == "1")
+                    {
+                        return;
+                    }
+                    var result = await window.ShowMessageAsync("Warning",
+                        $"Unable to monitor if CSGO is open, please open {Assembly.GetExecutingAssembly().GetName().Name} with admin privilege",
+                        MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { NegativeButtonText = "Don't ask me again" } );
+                    if(result == MessageDialogResult.Negative)
+                    {
+                        Regedit.DontAskAdmin = "1";
+                    }
                 }
             }
         }

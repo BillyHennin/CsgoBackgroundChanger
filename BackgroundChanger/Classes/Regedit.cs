@@ -12,6 +12,7 @@ namespace BackgroundChanger.Classes
         //Subkey references
         private const string MyWebmKey = "WebmFolder";
         private const string MyCsgoKey = "CsgoFolder";
+        private const string MyAskAdmin = "NoAdmin";
 
         public static string MyWebmFolderPath
         {
@@ -24,6 +25,13 @@ namespace BackgroundChanger.Classes
             get => GetValue(MyCsgoKey);
             set => SetValue(MyCsgoKey, value);
         }
+
+        public static string DontAskAdmin
+        {
+            get => GetValue(MyAskAdmin);
+            set => SetValue(MyAskAdmin, value);
+        }
+
 
         /// <summary>
         /// Function that check if the regedit keys has been initialized
@@ -45,9 +53,15 @@ namespace BackgroundChanger.Classes
             {
                 SetValue(MyCsgoKey, string.Empty);
             }
+
+            if (Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(MyAskAdmin) == null)
+            {
+                SetValue(MyAskAdmin, string.Empty);
+            }
             //set keys (empty if initialized)
             MyWebmFolderPath = Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(MyWebmKey).ToString();
             MyCsgoFolderPath = Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(MyCsgoKey).ToString();
+            MyCsgoFolderPath = Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(MyAskAdmin).ToString();
         }
         //on set : update the regedit
         private static void SetValue(string key, object val)

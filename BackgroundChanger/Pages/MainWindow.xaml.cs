@@ -27,9 +27,9 @@ namespace BackgroundChanger.Pages
 
         public async void InitWindow()
         {
-            await MonitorProcess.InitMonitoringAsync(this);
             //Check if regedit is set up
             Regedit.CheckRegedit();
+            await MonitorProcess.InitMonitoringAsync(this);            
             //Wait for the app to check for update
             if (await Update.CheckUpdate(this) == null)
             {
@@ -72,11 +72,11 @@ namespace BackgroundChanger.Pages
             {
                 WebmList.Items.Add(new MediaElement
                 {
-                        Source = new Uri(file),
-                        Height = 200,
-                        Width = 315,
-                        Stretch = Stretch.Fill,
-                        Margin = new Thickness(0, 5, 0, 5)
+                    Source = new Uri(file),
+                    Height = 200,
+                    Width = 315,
+                    Stretch = Stretch.Fill,
+                    Margin = new Thickness(0, 5, 0, 5)
                 });
                 //Let the user know how the progress is going
                 controller.SetProgress(y += progress);
