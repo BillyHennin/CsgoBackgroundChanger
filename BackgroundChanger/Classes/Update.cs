@@ -50,8 +50,7 @@ namespace BackgroundChanger.Classes
                         throw new Exception();
                     }
 
-                    if (Assembly.GetExecutingAssembly().GetName().Version
-                                .CompareTo(new Version(result[Versi].ToString())) >= 0)
+                    if (CompareVerion(result[Versi].ToString()))
                     {
                         return null;
                     }
@@ -73,5 +72,10 @@ namespace BackgroundChanger.Classes
             }
 #endif
         }
+
+        public static string GetVersion() => Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+        public static bool CompareVerion(string version)
+            => Assembly.GetExecutingAssembly().GetName().Version.CompareTo(new Version(version)) >= 0;
     }
 }

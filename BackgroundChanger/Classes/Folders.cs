@@ -79,6 +79,15 @@ namespace BackgroundChanger.Classes
             {
                 return false;
             }
+            try
+            {
+                Directory.GetFiles(path);
+            }
+            catch
+            {
+                return false;
+            }
+
             var curFolder = $"{path}{Format(Exe)}";
             var result = Directory.GetFiles(path).Contains($"{curFolder}.exe");
                 result = result && Directory.GetDirectories(path).Contains($"{curFolder}");            

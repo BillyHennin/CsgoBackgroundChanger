@@ -38,7 +38,7 @@ namespace BackgroundChanger.Classes
                     }
                 } else
                 {
-                    if(Regedit.DontAskAdmin == "1")
+                    if(!string.IsNullOrEmpty(Regedit.DontAskAdmin))
                     {
                         return;
                     }

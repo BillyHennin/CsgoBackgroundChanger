@@ -1,4 +1,6 @@
 ﻿using Microsoft.Win32;
+using System;
+using System.Reflection;
 
 namespace BackgroundChanger.Classes
 {
@@ -13,6 +15,7 @@ namespace BackgroundChanger.Classes
         private const string MyWebmKey = "WebmFolder";
         private const string MyCsgoKey = "CsgoFolder";
         private const string MyAskAdmin = "NoAdmin";
+        private const string CurrentVer = "CurrentVersion";
 
         public static string MyWebmFolderPath
         {
@@ -32,6 +35,11 @@ namespace BackgroundChanger.Classes
             set => SetValue(MyAskAdmin, value);
         }
 
+        public static string CurrentVersion
+        {
+            get => GetValue(CurrentVer);
+            set => SetValue(CurrentVer, value);
+        }
 
         /// <summary>
         /// Function that check if the regedit keys has been initialized
@@ -58,10 +66,17 @@ namespace BackgroundChanger.Classes
             {
                 SetValue(MyAskAdmin, string.Empty);
             }
-            //set keys (empty if initialized)
-            MyWebmFolderPath = Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(MyWebmKey).ToString();
-            MyCsgoFolderPath = Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(MyCsgoKey).ToString();
-            MyCsgoFolderPath = Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(MyAskAdmin).ToString();
+
+            if (Registry.CurrentUser.OpenSubKey(MyKey, true)?.GetValue(CurrentVer) == null)
+            {
+                SetValue(CurrentVer, Update.GetVersion());
+            }
+
+            if (Update.CompareVerion(CurrentVersion))
+            {
+                CurrentVersion = Update.GetVersion();
+                DontAskAdmin = string.Empty;
+            }
         }
         //on set : update the regedit
         private static void SetValue(string key, object val)

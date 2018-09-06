@@ -35,8 +35,7 @@ namespace BackgroundChanger.Pages
             {
                 //Once it's done, fill the listview with videos
                 await FillList();
-            }
-            
+            }            
         }
 
         /// <summary>
@@ -221,7 +220,9 @@ namespace BackgroundChanger.Pages
         {
             Process.Start("https://github.com/BillyHennin/CsgoBackgroundChanger/releases");
             UpdateFlyOut.IsOpen = false;
-        } 
-            
+        }
+
+        private void BtnNewFiles_Click(object sender, RoutedEventArgs e) 
+            => Process.Start("https://billyhennin.github.io/CsgoBackgroundChanger/backgrounds.html");
     }
 }
